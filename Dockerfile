@@ -14,3 +14,4 @@ RUN echo "local({options(shiny.port = ${SHINY_PORT}, shiny.host = '0.0.0.0')})" 
 
 # Endpoint
 CMD ["Rscript", "-e", "myshinyapp::runApp()"]
+
