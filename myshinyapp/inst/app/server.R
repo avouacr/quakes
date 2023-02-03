@@ -1,25 +1,19 @@
 
 server <- function(input, output) {
-
-  data <- reactive({
-    # Connect to the DB
-    conn <- DBI::dbConnect(
-      RPostgres::Postgres(),
-      dbname = Sys.getenv("POSTGRESQL_DB_NAME"),
-      host = Sys.getenv("POSTGRESQL_DB_HOST"),
-      port = Sys.getenv("POSTGRESQL_DB_PORT"),
-      user = Sys.getenv("POSTGRESQL_DB_USER"),
-      password = Sys.getenv("POSTGRESQL_DB_PASSWORD")
+  
+  df_quakes <- 
+    aws.s3::s3read_using(
+      FUN = readr::read_csv,
+      object = "diffusion/shiny-template/quakes.csv",
+      bucket = "avouacr",
+      opts = list("region" = "")
     )
+  
+  data <- reactive({
     
-    # Get the data
-    quakes <- DBI::dbGetQuery(conn, glue::glue("SELECT * FROM quakes WHERE mag >= {input$magSlider}"))
-    quakes <- data.frame(quakes)
+    quakes_sub <- dplyr::filter(df_quakes, mag >= input$magSlider)
     
-    # Disconnect from the DB
-    DBI::dbDisconnect(conn)
-    
-    return(quakes)
+    return(quakes_sub)
   })
   
   # Base map
@@ -35,7 +29,7 @@ server <- function(input, output) {
     proxy <- leaflet::leafletProxy("map")
     proxy <- leaflet::clearMarkers(proxy)
     if (nrow(data()) > 0) {
-    proxy <- leaflet::addMarkers(proxy, data=data(), ~long, ~lat, label = ~mag)  
+      proxy <- leaflet::addMarkers(proxy, data=data(), ~long, ~lat, label = ~mag)  
     }
-    })
+  })
 }

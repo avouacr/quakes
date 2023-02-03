@@ -1,13 +1,5 @@
 # Base image
-FROM rocker/shiny:4.1.2
-
-# Install required linux librairies
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends libpq-dev \ 
-                                               libssl-dev \
-                                               libxml2-dev \
-                                               gdal-bin \
-                                               libgdal-dev
+FROM inseefrlab/onyxia-rstudio:r4.1.3
 
 # Install R package and its dependencies
 RUN install2.r remotes
