@@ -16,7 +16,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v3
         with:
-          images: inseefrlab/quakes
+          images: avouacr/quakes-demo
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -35,7 +35,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ${{ steps.docker_meta.outputs.tags }}
-            ${{ github.ref == 'refs/heads/main' && 'inseefrlab/quakes:latest' || '' }}
+            ${{ github.ref == 'refs/heads/main' && 'avouacr/quakes-demo' || '' }}
           labels: ${{ steps.docker_meta.outputs.labels }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
